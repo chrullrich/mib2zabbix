@@ -16,6 +16,7 @@ Export loaded SNMP MIB OIDs to Zabbix Template XML
 
     -N, --name=STRING           template name (default: OID label)
     -G, --group=STRING          template group (default: 'Templates')
+    -d, --disable-varbinds      no varbind info in description
     -e, --enable-items          enable all template items (default: disabled)
 
     -o, --oid=STRING            OID tree root to export
@@ -207,6 +208,7 @@ GetOptions(
     'G|group=s'             => \$opts->{ group },           # Template group
     'o|oid=s'               => \$opts->{ oid },             # Root OID to export
 
+    'b|disable-varbinds'    => \$opts->{ disableVarbinds }, # Do not include varbinds in item description
     'e|enable-items'        => \$opts->{ enableitems },     # Enable template items
 
     'v|snmpver=i'           => \$opts->{ snmpver },         # SNMP Version
@@ -559,7 +561,7 @@ sub node_to_trapitem {
     }
 
     # Append varbinds to description
-    if (defined($node->{ varbinds }) && scalar @{ $node->{ varbinds } }) {
+    if (!$opts->{ disableVarbinds } && defined($node->{ varbinds }) && scalar @{ $node->{ varbinds } }) {
         my $varcount = scalar @{ $node->{ varbinds } };
 
         if ($desc ne '') {
